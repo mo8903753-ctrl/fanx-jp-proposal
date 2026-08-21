@@ -88,21 +88,18 @@
 /* ---- 方案图谱（会议导航层） ---- */
 (function(){
   const NODES=[
-    {id:'root',label:'FanX Drive X3\n日本众筹方案',r:44,g:0,target:'#c02'},
-    {id:'c02',label:'品类判断 · 产品证明',r:26,g:1,target:'#c02'},
+    {id:'root',label:'FanX Drive X3\n日本众筹方案',r:44,g:0,target:'#c03'},
     {id:'c03',label:'竞品与比较 · 日本',r:26,g:1,target:'#c03'},
-    {id:'c05',label:'目标拆解 4,100 人',r:26,g:2,target:'#c05'},
+    {id:'c05',label:'目标拆解 2,560 人',r:26,g:2,target:'#c05'},
     {id:'c07',label:'定价与 Reward',r:26,g:2,target:'#c07'},
     {id:'c08',label:'受众与场景',r:26,g:1,target:'#c08'},
     {id:'c09',label:'营销预算与 KOL',r:26,g:2,target:'#c09'},
     {id:'c10',label:'执行时间线',r:26,g:3,target:'#c10'},
     {id:'c11',label:'公司介绍 · 资质',r:26,g:4,target:'#c11'},
     {id:'c12',label:'案例与资源',r:26,g:3,target:'#c12'},
-    {id:'c13',label:'可行性判断',r:26,g:4,target:'#c13'},
     {id:'s-firstday',label:'首日转化机制',r:15,g:2,p:'c07',target:'#n-firstday'},
     {id:'s-kol',label:'KOL 预找名单',r:15,g:2,p:'c09',target:'#n-kol'},
-    {id:'s-mkres',label:'Makuake 资源',r:15,g:3,p:'c12',target:'#n-mkres'},
-    {id:'s-coop',label:'品牌方配合清单',r:15,g:4,p:'c13',target:'#n-coop'}
+    {id:'s-mkres',label:'Makuake 资源',r:15,g:3,p:'c12',target:'#n-mkres'}
   ];
   const COLOR={0:'#F2F3F6',1:'#8FA0F2',2:'#6FC0B5',3:'#C6A968',4:'#D07159'};
   const svg=document.getElementById('mapSvg'), ov=document.getElementById('mapOv'), btn=document.getElementById('mapBtn');

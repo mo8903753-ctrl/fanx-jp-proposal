@@ -1,0 +1,587 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+:root{
+  --bg:#FAFAF8; --card:#FFFFFF;
+  --ink:#17181D; --mut:#4E545E; --faint:#6F7580;
+  --hair:rgba(23,24,29,.13); --hair2:rgba(23,24,29,.07);
+  --acc:#2B50E0; --acc-dim:rgba(43,80,224,.09);
+  --card-bd:rgba(23,24,29,.1);
+  --shadow:0 1px 2px rgba(20,22,28,.04),0 14px 36px rgba(20,22,28,.07);
+  --neg:#B3543F;
+  --dk:#101218; --dk-card:rgba(255,255,255,.05); --dk-bd:rgba(255,255,255,.12);
+  --dk-ink:#EAEDF2; --dk-mut:#B0B5BE; --dk-faint:#9BA1AB;
+  --serif:'Noto Serif SC',Georgia,serif;
+  --sans:'Noto Sans SC',-apple-system,'PingFang SC',sans-serif;
+  --mono:'IBM Plex Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:auto}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-weight:400;line-height:1.9;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+::selection{background:var(--acc);color:#fff}
+img{max-width:100%}
+#glow{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(52vw 52vw at 70% 38%,rgba(60,90,210,.07),transparent 66%)}
+.content{position:relative;z-index:2}
+
+#topbar{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;justify-content:space-between;align-items:center;
+  padding:14px 32px;font-family:var(--mono);font-size:14px;letter-spacing:.14em;color:var(--faint);
+  text-transform:uppercase;pointer-events:none;background:rgba(250,250,248,.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(23,24,29,.05)}
+#topbar b{font-weight:500;color:var(--mut)}
+
+/* chapter rail */
+#rail{position:fixed;left:24px;top:50%;transform:translateY(-50%);z-index:30;font-family:var(--mono)}
+#rail a{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--faint);
+  font-size:14px;letter-spacing:.06em;padding:4px 0;transition:color .35s;white-space:nowrap}
+#rail a .tick{display:inline-block;width:14px;height:1px;background:var(--hair);transition:all .35s;flex:0 0 auto}
+#rail a .lb{opacity:0;transform:translateX(-4px);transition:all .35s;font-size:14px}
+#rail a.on{color:var(--ink)}
+#rail a.on .tick{width:26px;background:var(--acc)}
+#rail a.on .lb{opacity:1;transform:none}
+#rail a:hover .lb{opacity:.85;transform:none}
+@media(max-width:1440px){#rail a .lb{display:none}}
+@media(max-width:1100px){#rail{display:none}}
+
+/* scaffolding */
+.wrap{max-width:1150px;margin:0 auto;padding:0 30px;width:100%}
+section.ch{padding:16vh 0 11vh;position:relative}
+.eyebrow{font-family:var(--mono);font-size:14px;letter-spacing:.22em;color:var(--acc);
+  text-transform:uppercase;display:flex;align-items:center;gap:14px;margin-bottom:30px}
+.eyebrow::after{content:"";height:1px;width:54px;background:var(--hair)}
+.eyebrow .zh{color:var(--mut);letter-spacing:.3em}
+h2.cht{font-family:var(--serif);font-weight:700;font-size:clamp(34px,4.4vw,56px);
+  line-height:1.45;letter-spacing:.01em;max-width:20em;margin-bottom:26px;text-wrap:balance}
+h2.cht.sm{font-size:clamp(26px,3vw,38px)}
+.lede{font-size:21px;line-height:2;color:var(--mut);max-width:44em;font-weight:400}
+.lede strong,.lede b{color:var(--ink);font-weight:500}
+.acc{color:var(--acc)}
+.jp{font-family:var(--serif)}
+.note{font-size:14.5px;color:var(--faint);line-height:1.9;max-width:46em}
+.hairline{height:1px;background:var(--hair2);border:0;margin:60px 0}
+.srcline{display:block;margin-top:12px;font-family:var(--mono);font-size:14px;letter-spacing:.05em;color:var(--faint);line-height:1.8}
+.srcline a{color:var(--acc);text-decoration:none;border-bottom:1px solid var(--acc-dim)}
+.srcline a:hover{border-bottom-color:var(--acc)}
+.mk{background:linear-gradient(transparent 62%,var(--acc-dim) 0);padding:0 .06em;border-radius:2px}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(28px);transition:opacity .9s cubic-bezier(.22,.6,.2,1),transform .9s cubic-bezier(.22,.6,.2,1);transition-delay:var(--d,0s)}
+.rv.in{opacity:1;transform:none}
+
+/* ---------- hero ---------- */
+#hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;position:relative;padding:15vh 0 9vh}
+#hero .kicker{font-family:var(--mono);font-size:14px;letter-spacing:.26em;color:var(--acc);text-transform:uppercase;margin-bottom:28px}
+#hero h1{font-family:var(--serif);font-weight:900;font-size:clamp(40px,5.8vw,78px);line-height:1.22;letter-spacing:.015em;max-width:12em}
+#hero .sub{font-family:var(--serif);font-weight:600;font-size:clamp(19px,2vw,26px);color:var(--mut);margin-top:24px;max-width:36em;line-height:1.9}
+.heroimg{margin-top:6vh;overflow:hidden;border-radius:6px;box-shadow:var(--shadow);position:relative}
+.heroimg img{display:block;width:100%;height:auto;will-change:transform;transform:scale(1.06)}
+.heroimg figcaption{position:absolute;left:0;right:0;bottom:0;padding:22px 26px;
+  font-family:var(--mono);font-size:14px;letter-spacing:.1em;color:#fff;
+  background:linear-gradient(transparent,rgba(16,18,24,.62));display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.statbar{display:grid;grid-template-columns:repeat(3,auto);gap:clamp(26px,4vw,60px);margin-top:5vh;width:max-content;max-width:100%;
+  border-top:1px solid var(--hair);padding-top:26px}
+.statbar .st .k{font-family:var(--mono);font-size:14px;letter-spacing:.14em;color:var(--faint);margin-bottom:8px}
+.statbar .st .v{font-family:var(--mono);font-weight:500;font-size:clamp(20px,2vw,27px);letter-spacing:.02em;color:var(--ink);white-space:nowrap}
+.statbar .st .v small{font-size:14px;color:var(--mut);margin-left:2px}
+#hero .scrollhint{position:absolute;bottom:30px;right:30px;font-family:var(--mono);font-size:14px;letter-spacing:.2em;color:var(--faint);text-transform:uppercase;display:flex;align-items:center;gap:10px}
+#hero .scrollhint i{display:block;width:1px;height:34px;background:linear-gradient(var(--acc),transparent);animation:drip 2.2s ease-in-out infinite}
+@keyframes drip{0%{transform:scaleY(0);transform-origin:top}45%{transform:scaleY(1);transform-origin:top}55%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* proof cards */
+.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--card-bd);border:1px solid var(--card-bd);margin-top:48px}
+.fact{background:var(--card);padding:32px 34px;min-width:0}
+.fact b{display:block;font-family:var(--serif);font-weight:700;font-size:19px;margin-bottom:10px}
+.fact p{font-size:15px;color:var(--mut);line-height:1.95}
+.fact .srcline{margin-top:10px}
+.photorow{display:grid;grid-template-columns:1.35fr 1fr;gap:22px;margin-top:26px}
+.photorow figure{margin:0}
+.photorow img{display:block;width:100%;height:100%;object-fit:cover;border-radius:4px;box-shadow:var(--shadow)}
+.photorow figcaption{margin-top:10px;font-family:var(--mono);font-size:14px;letter-spacing:.08em;color:var(--faint);line-height:1.7}
+.bigquote{font-family:var(--serif);font-weight:600;font-size:clamp(21px,2.5vw,30px);line-height:1.85;max-width:28em;margin-top:56px;text-wrap:balance}
+.bigquote .u{border-bottom:1px solid var(--acc);padding-bottom:3px}
+
+/* tables */
+.tbw{overflow-x:auto;margin-top:46px;border:1px solid var(--card-bd)}
+table.dt{width:100%;border-collapse:collapse;font-size:15px;min-width:680px}
+table.dt th{font-family:var(--mono);font-weight:500;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);text-align:left;padding:16px 22px;border-bottom:1px solid var(--hair);background:var(--card)}
+table.dt td{padding:16px 22px;border-bottom:1px solid var(--hair2);color:var(--mut);vertical-align:top;line-height:1.85}
+table.dt tr:last-child td{border-bottom:0}
+table.dt td:first-child{color:var(--ink);font-weight:500}
+table.dt td.num,table.dt th.num{font-family:var(--mono);text-align:right;white-space:nowrap}
+table.dt tr.total td{border-top:1px solid var(--hair);color:var(--ink);font-weight:500;background:var(--card)}
+table.dt tr.hl td{background:var(--acc-dim)}
+table.dt td b.k{color:var(--ink);font-weight:700}
+table.dt td small{display:block;font-family:var(--mono);font-size:14px;letter-spacing:.04em;margin-top:6px}
+table.dt td small a{color:var(--acc);text-decoration:none;border-bottom:1px solid var(--acc-dim)}
+
+/* mode cards */
+.modecards{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:30px}
+.modecard{border:1px solid var(--card-bd);background:var(--card);padding:34px 36px;box-shadow:var(--shadow);min-width:0}
+.modecard .mk2{font-family:var(--mono);font-size:14px;letter-spacing:.2em;color:var(--acc);text-transform:uppercase;margin-bottom:14px}
+.modecard h3{font-family:var(--serif);font-weight:700;font-size:22px;margin-bottom:10px}
+.modecard p{font-size:15px;color:var(--mut);line-height:1.95}
+.modecard p b{color:var(--ink);font-weight:500}
+
+/* anchor cards */
+.anchors{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--card-bd);border:1px solid var(--card-bd);margin-top:46px}
+.anchor{background:var(--card);padding:30px 32px;min-width:0}
+.anchor .k{font-family:var(--mono);font-size:14px;letter-spacing:.2em;color:var(--acc);text-transform:uppercase;margin-bottom:14px}
+.anchor b{display:block;font-family:var(--serif);font-weight:700;font-size:18px;margin-bottom:10px}
+.anchor p{font-size:14.5px;color:var(--mut);line-height:1.95}
+
+/* range bars */
+.ranges{margin-top:56px}
+.rrow{display:grid;grid-template-columns:190px 1fr;gap:26px;align-items:center;padding:16px 0;border-bottom:1px solid var(--hair2)}
+.rrow .rn{font-size:15px;color:var(--ink);font-weight:500}
+.rrow .rn small{display:block;font-family:var(--mono);font-size:14px;color:var(--faint);font-weight:400;margin-top:3px;letter-spacing:.04em}
+.rrow .rt{position:relative;height:34px;background:var(--hair2);border-radius:3px}
+.rrow .rf{position:absolute;top:0;bottom:0;display:block;background:linear-gradient(90deg,var(--acc),color-mix(in srgb,var(--acc) 60%,#8093EF));border-radius:3px;
+  transform-origin:left;transform:scaleX(0);transition:transform 1.2s cubic-bezier(.3,0,.2,1)}
+.rrow.in .rf{transform:scaleX(1)}
+.rrow .rv2{position:absolute;top:50%;transform:translate(-50%,-50%);font-family:var(--mono);font-size:14px;color:#fff;white-space:nowrap;letter-spacing:.04em;left:var(--lx,50%)}
+.rrow .rv2.out{color:var(--ink);transform:translateY(-50%);left:var(--lx)}
+.rmark{position:relative;height:0}
+.rmark i{position:absolute;top:-6px;bottom:-6px;width:1px;background:var(--neg);display:block}
+.rmark span{position:absolute;top:-34px;transform:translateX(-50%);font-family:var(--mono);font-size:14px;color:var(--neg);white-space:nowrap;letter-spacing:.06em}
+.rscale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:14px;color:var(--faint);margin-top:10px;letter-spacing:.05em}
+
+/* dark chapter */
+.dkwrap{background:var(--dk);color:var(--dk-ink);margin:14vh 0;padding:12vh 0;position:relative}
+.dkwrap .eyebrow{color:#8093EF}
+.dkwrap .eyebrow .zh{color:var(--dk-mut)}
+.dkwrap .eyebrow::after{background:rgba(236,237,239,.16)}
+.dkwrap h2.cht{color:var(--dk-ink)}
+.dkwrap .lede{color:var(--dk-mut)}
+.dkwrap .lede b,.dkwrap .lede strong{color:var(--dk-ink)}
+.dkwrap .note{color:var(--dk-faint)}
+.dkwrap .mk{background:linear-gradient(transparent 62%,rgba(128,147,239,.25) 0)}
+.wfgrid{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:52px}
+.wfcol{border:1px solid var(--dk-bd);background:var(--dk-card);padding:36px 38px;min-width:0}
+.wfcol>h3{font-family:var(--serif);font-weight:700;font-size:23px;margin-bottom:6px}
+.wfcol>.wsub{font-family:var(--mono);font-size:14px;color:var(--dk-faint);letter-spacing:.08em;margin-bottom:26px}
+.wrow{padding:11px 0;border-bottom:1px solid rgba(236,237,239,.08)}
+.wrow .wl{display:flex;justify-content:space-between;gap:18px;align-items:baseline;font-size:15px;color:var(--dk-mut)}
+.wrow .wl b{font-family:var(--mono);font-weight:500;color:var(--dk-ink);white-space:nowrap}
+.wrow .wl .neg{color:#D98B73}
+.wrow .wb{height:3px;background:rgba(236,237,239,.1);margin-top:9px;position:relative}
+.wrow .wb i{position:absolute;left:0;top:0;bottom:0;display:block;background:#5A6070;width:var(--w)}
+.wnet{margin-top:26px;padding-top:22px;border-top:1px solid var(--dk-bd)}
+.wnet .nk{font-family:var(--mono);font-size:14px;letter-spacing:.16em;color:var(--dk-faint);text-transform:uppercase}
+.wnet .nv{font-family:var(--mono);font-weight:500;font-size:clamp(30px,3vw,40px);color:#fff;margin:8px 0 4px;white-space:nowrap}
+.wnet .nv small{font-size:.5em;color:var(--dk-mut);margin-left:6px}
+.wnet .nb{height:6px;background:rgba(236,237,239,.12);margin-top:14px;position:relative;border-radius:3px;overflow:hidden}
+.wnet .nb i{position:absolute;left:0;top:0;bottom:0;display:block;background:linear-gradient(90deg,#8093EF,#2B50E0);border-radius:3px;width:0;transition:width 1.3s cubic-bezier(.3,0,.2,1) .2s}
+.in .wnet .nb i{width:var(--w)}
+.wfnote{font-size:14px;color:var(--dk-faint);line-height:1.85;margin-top:8px}
+table.dk{width:100%;border-collapse:collapse;font-size:14px;margin-top:18px}
+table.dk th{font-family:var(--mono);font-weight:500;font-size:14px;color:var(--dk-faint);text-align:left;padding:9px 10px 9px 0;border-bottom:1px solid var(--dk-bd);letter-spacing:.06em}
+table.dk td{padding:9px 10px 9px 0;border-bottom:1px solid rgba(236,237,239,.08);color:var(--dk-mut)}
+table.dk td.num{font-family:var(--mono);text-align:right;white-space:nowrap;color:var(--dk-ink)}
+table.dk tr:last-child td{border-bottom:0;font-weight:500;color:var(--dk-ink)}
+.dkconc{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:30px}
+.dkcard{border:1px solid var(--dk-bd);background:var(--dk-card);padding:32px 34px;min-width:0}
+.dkcard .k{font-family:var(--mono);font-size:14px;letter-spacing:.2em;color:#8093EF;text-transform:uppercase;margin-bottom:12px}
+.dkcard h3{font-family:var(--serif);font-weight:700;font-size:20px;color:var(--dk-ink);margin-bottom:10px}
+.dkcard p{font-size:15px;color:var(--dk-mut);line-height:1.95}
+.dkcard p b{color:var(--dk-ink);font-weight:500}
+
+/* tiers */
+.tiers{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:52px}
+.tier{border:1px solid var(--card-bd);background:var(--card);padding:28px 22px 24px;position:relative;display:flex;flex-direction:column;box-shadow:var(--shadow);min-width:0;transition:transform .4s,border-color .4s}
+.tier:hover{transform:translateY(-4px)}
+.tier .tn{font-family:var(--mono);font-size:14px;letter-spacing:.1em;color:var(--mut);margin-bottom:18px;min-height:44px}
+.tier .pr{font-family:var(--serif);font-weight:700;font-size:clamp(24px,2.2vw,31px);letter-spacing:.01em;margin-bottom:14px}
+.tier .pr small{display:block;font-size:.5em;color:var(--faint);font-family:var(--mono);font-weight:400;margin-top:4px}
+.tier .qty{font-size:14.5px;color:var(--mut);line-height:1.85;margin-bottom:14px;flex:1}
+.tier .sum{font-family:var(--mono);font-size:14px;color:var(--ink);border-top:1px solid var(--hair2);padding-top:12px;letter-spacing:.03em}
+.tier.hot{border-color:var(--acc);background:var(--acc-dim)}
+.tier.hot .badge{position:absolute;top:-13px;left:20px;font-family:var(--mono);font-size:14px;letter-spacing:.14em;background:var(--acc);color:#fff;padding:4px 10px;text-transform:uppercase}
+.tier .lim{position:absolute;top:-13px;left:20px;font-family:var(--mono);font-size:14px;letter-spacing:.12em;border:1px solid var(--hair);background:var(--bg);color:var(--mut);padding:3px 10px}
+.tier.anchor-tier{background:transparent;box-shadow:none;border-style:dashed}
+.tier.anchor-tier .pr{color:var(--faint)}
+.aovline{margin-top:56px;text-align:center}
+.aovline .f{font-family:var(--mono);font-size:clamp(17px,2.4vw,27px);letter-spacing:.03em;color:var(--ink)}
+.aovline .f b{color:var(--acc);font-weight:500}
+.aovline .e{margin-top:14px;font-size:14.5px;color:var(--faint);max-width:46em;margin-left:auto;margin-right:auto;line-height:1.9}
+
+/* audience */
+.audgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:52px}
+.acard{border:1px solid var(--card-bd);background:var(--card);box-shadow:var(--shadow);min-width:0;display:flex;flex-direction:column}
+.acard .aimg{aspect-ratio:4/3;overflow:hidden}
+.acard .aimg img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .8s cubic-bezier(.22,.6,.2,1)}
+.acard:hover .aimg img{transform:scale(1.04)}
+.acard .ab{padding:22px 22px 24px}
+.acard .ak{font-family:var(--mono);font-size:14px;letter-spacing:.16em;color:var(--acc);text-transform:uppercase;margin-bottom:10px}
+.acard b{display:block;font-family:var(--serif);font-weight:700;font-size:18px;margin-bottom:8px}
+.acard p{font-size:14.5px;color:var(--mut);line-height:1.9}
+
+/* budget bars */
+.bars{margin-top:52px}
+.brow{display:grid;grid-template-columns:230px 1fr 190px;gap:24px;align-items:center;padding:14px 0;border-bottom:1px solid var(--hair2)}
+.brow .bn{font-size:15px;color:var(--ink)}
+.brow .bn small{display:block;font-size:14px;color:var(--faint);font-weight:400;line-height:1.7}
+.brow .bt{position:relative;height:5px;background:var(--hair2);border-radius:3px}
+.brow .bt i{position:absolute;left:0;top:0;bottom:0;display:block;width:0;background:linear-gradient(90deg,var(--acc),color-mix(in srgb,var(--acc) 55%,#8093EF));border-radius:3px;transition:width 1.3s cubic-bezier(.3,0,.2,1)}
+.brow.in .bt i{width:var(--w)}
+.brow .bv{font-family:var(--mono);font-size:14.5px;color:var(--mut);text-align:right;white-space:nowrap}
+.brow .bv b{color:var(--ink);font-weight:500;margin-right:8px}
+.brow.total{border-top:1px solid var(--hair);border-bottom:0;padding-top:18px}
+.brow.total .bn,.brow.total .bv b{font-weight:700}
+
+/* KPI grid */
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--card-bd);border:1px solid var(--card-bd);margin-top:48px}
+.kpi{background:var(--card);padding:26px 24px;min-width:0}
+.kpi .kk{font-family:var(--mono);font-size:14px;letter-spacing:.12em;color:var(--faint);margin-bottom:10px;text-transform:uppercase}
+.kpi .kv{font-family:var(--mono);font-weight:500;font-size:clamp(19px,1.8vw,24px);color:var(--ink);white-space:nowrap}
+.kpi .kd{margin-top:10px;font-size:14px;color:var(--faint);line-height:1.75}
+
+/* timeline */
+.tl{margin-top:56px;position:relative;max-width:820px}
+.tl::before{content:"";position:absolute;left:7px;top:10px;bottom:10px;width:1px;background:var(--hair)}
+.tlphase{font-family:var(--mono);font-size:14px;letter-spacing:.22em;color:var(--acc);text-transform:uppercase;margin:34px 0 6px;padding-left:48px}
+.tlphase:first-child{margin-top:0}
+.tle{position:relative;padding:0 0 26px 48px}
+.tle::before{content:"";position:absolute;left:2.5px;top:9px;width:10px;height:10px;border-radius:50%;background:var(--bg);border:1px solid var(--acc);transition:background .5s}
+.tle.in::before{background:var(--acc)}
+.tle .tk{font-family:var(--mono);font-size:14px;letter-spacing:.1em;color:var(--acc);margin-bottom:4px}
+.tle h3{font-family:var(--serif);font-weight:700;font-size:18px;margin-bottom:5px}
+.tle p{font-size:14.5px;color:var(--mut);font-weight:400;max-width:44em;line-height:1.95}
+
+/* feasibility */
+.whys{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--card-bd);border:1px solid var(--card-bd);margin-top:50px}
+.why{background:var(--card);padding:32px 32px;min-width:0}
+.why .n{font-family:var(--mono);font-size:14px;color:var(--faint);letter-spacing:.14em;margin-bottom:18px}
+.why h3{font-family:var(--serif);font-weight:700;font-size:19px;margin-bottom:10px}
+.why p{font-size:14.5px;color:var(--mut);line-height:1.95}
+.preq{margin-top:34px;border:1px solid var(--card-bd);background:var(--card);padding:30px 34px;box-shadow:var(--shadow)}
+.preq .pk{font-family:var(--mono);font-size:14px;letter-spacing:.2em;color:var(--acc);text-transform:uppercase;margin-bottom:14px}
+.preq ul{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.preq li{font-size:15px;color:var(--mut);line-height:1.9;padding-left:22px;position:relative}
+.preq li::before{content:"◆";position:absolute;left:0;top:0;color:var(--acc);font-size:12px;line-height:2.6}
+.preq li b{color:var(--ink);font-weight:500;display:block}
+.preq.c2 ul{grid-template-columns:1fr 1fr}
+.bounds{margin-top:26px;border:1px solid var(--card-bd);background:var(--dk);padding:30px 34px}
+.bounds .pk{font-family:var(--mono);font-size:14px;letter-spacing:.2em;color:#D98B73;text-transform:uppercase;margin-bottom:14px}
+.bounds ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:10px 30px}
+.bounds li{font-size:15px;color:var(--dk-mut);line-height:1.85;display:flex;gap:12px;align-items:baseline}
+.bounds li i{font-style:normal;color:#D98B73;font-family:var(--mono);font-size:14px}
+.matgrid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--card-bd);border:1px solid var(--card-bd);margin-top:26px}
+.mcell{background:var(--card);padding:28px 30px;min-width:0}
+.mcell .mk3{font-family:var(--mono);font-size:14px;letter-spacing:.18em;color:var(--acc);text-transform:uppercase;margin-bottom:12px}
+.mcell ul{list-style:none}
+.mcell li{font-size:15px;color:var(--mut);line-height:2;padding-left:18px;position:relative}
+.mcell li::before{content:"—";position:absolute;left:0;color:var(--faint)}
+.closing{font-family:var(--serif);font-weight:600;font-size:clamp(19px,2.2vw,27px);line-height:2;max-width:31em;margin:76px auto 0;text-align:center;text-wrap:balance}
+.closing .u{border-bottom:1px solid var(--acc);padding-bottom:2px}
+
+/* footer */
+footer{border-top:1px solid var(--hair);margin-top:12vh;padding:52px 0 60px}
+footer .frow{display:flex;justify-content:space-between;align-items:flex-start;gap:30px;flex-wrap:wrap}
+footer .fl span{font-size:14px;color:var(--faint);letter-spacing:.04em;line-height:2;display:block;max-width:56em}
+footer .fl b{display:block;font-family:var(--serif);font-size:17px;color:var(--ink);margin-bottom:8px}
+footer .fr{font-family:var(--mono);font-size:14px;letter-spacing:.12em;color:var(--faint);text-transform:uppercase;text-align:right;line-height:2.1;white-space:nowrap}
+
+/* fund flow */
+.flowline{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:40px}
+.flowline .fs{border:1px solid var(--card-bd);background:var(--card);padding:12px 18px;font-size:15px;color:var(--ink);box-shadow:var(--shadow);border-radius:4px;line-height:1.7}
+.flowline .fa{font-family:var(--mono);color:var(--acc);font-size:15px}
+
+/* generic image cards */
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:26px}
+.case2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:40px}
+.kolhead{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.kolhead img{width:44px;height:44px;border-radius:50%;object-fit:cover;flex:none}
+.kolhead .kn{font-family:var(--serif);font-weight:700;font-size:16px}
+.kolhead .ks{font-family:var(--mono);font-size:14px;color:var(--faint)}
+.kolmeta{font-family:var(--mono);font-size:14px;color:var(--mut);margin-top:12px}
+.kolmeta a{color:var(--acc);text-decoration:none;border-bottom:1px solid var(--acc-dim)}
+.tri{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:26px}
+@media(max-width:720px){.case2,.tri{grid-template-columns:1fr}}
+.imgcard{border:1px solid var(--card-bd);background:var(--card);box-shadow:var(--shadow);padding:14px;min-width:0}
+.imgcard img{display:block;width:100%;height:auto;border-radius:3px}
+.imgcard figcaption{margin-top:12px;font-family:var(--mono);font-size:14px;letter-spacing:.05em;color:var(--faint);line-height:1.75}
+.darkchip{background:var(--dk);border-radius:4px;padding:16px 22px;display:block}
+.darkchip img{display:block;width:100%;height:auto}
+footer .fr img{display:block;width:120px;height:auto;border-radius:3px;margin:0 0 12px auto}
+@media(max-width:1000px){.duo{grid-template-columns:1fr}}
+@media(max-width:720px){footer .fr img{margin-left:0}}
+
+/* responsive */
+@media(max-width:1000px){
+  .facts{grid-template-columns:1fr}
+  .photorow{grid-template-columns:1fr}
+  .modecards,.wfgrid,.dkconc{grid-template-columns:1fr}
+  .anchors,.whys{grid-template-columns:1fr}
+  .tiers{grid-template-columns:repeat(2,1fr)}
+  .audgrid{grid-template-columns:1fr 1fr}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .preq ul,.preq.c2 ul{grid-template-columns:1fr}
+  .matgrid{grid-template-columns:1fr}
+  .bounds ul{grid-template-columns:1fr}
+  .rrow{grid-template-columns:1fr;gap:10px}
+  .rmark span{display:none}
+  .rrow .rv2.out{top:-24px;transform:none;left:var(--lm)}
+  .ranges .rrow:nth-child(3) .rv2{color:var(--ink);top:-24px;transform:none;left:var(--lm)}
+  .rrow .rv2{white-space:nowrap}
+}
+@media(max-width:720px){
+  #topbar{padding:14px 18px;font-size:14px;letter-spacing:.06em}
+  .wrap{padding:0 22px}
+  section.ch{padding:12vh 0 9vh}
+  .statbar{grid-template-columns:1fr 1fr;gap:22px 30px}
+  .tiers{grid-template-columns:1fr}
+  .audgrid{grid-template-columns:1fr}
+  .kpis{grid-template-columns:1fr}
+  .brow{grid-template-columns:1fr;gap:8px}
+  .brow .bv{text-align:left}
+  #hero .scrollhint{display:none}
+  .heroimg figcaption{position:static;background:var(--dk);padding:14px 16px}
+  .lede{font-size:18px}
+  .wfcol,.dkcard{padding:26px 24px}
+  footer .fr{text-align:left}
+}
+@media(prefers-reduced-motion:reduce){
+  .rv{transition:none;opacity:1;transform:none}
+  *{animation:none!important}
+}
+/* ---------- 方案图谱（会议导航层） ---------- */
+#mapBtn{position:fixed;right:26px;bottom:26px;z-index:60;display:flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:15px;letter-spacing:.1em;text-transform:uppercase;
+  background:var(--acc);color:#fff;border:0;padding:14px 20px;cursor:pointer;
+  box-shadow:0 6px 30px rgba(20,22,28,.28);transition:transform .3s,box-shadow .3s}
+#mapBtn:hover{transform:translateY(-2px);box-shadow:0 10px 38px rgba(20,22,28,.36)}
+#mapBtn svg{width:17px;height:17px;display:block}
+@media print{#mapBtn{display:none}}
+#mapOv{position:fixed;inset:0;z-index:70;background:rgba(8,9,14,.97);backdrop-filter:blur(6px);
+  opacity:0;visibility:hidden;transition:opacity .45s,visibility 0s .45s;display:flex;flex-direction:column}
+#mapOv.on{opacity:1;visibility:visible;transition:opacity .45s,visibility 0s}
+#mapOv .mhead{display:flex;justify-content:space-between;align-items:flex-start;padding:26px 34px 0;flex:0 0 auto}
+#mapOv .mttl{font-family:var(--serif);font-weight:700;font-size:26px;color:#F2F3F6;line-height:1.4}
+#mapOv .mttl small{display:block;font-family:var(--mono);font-size:14px;letter-spacing:.2em;
+  color:#8F96A6;text-transform:uppercase;margin-top:8px;font-weight:400}
+#mapOv .mclose{font-family:var(--mono);font-size:14px;letter-spacing:.14em;color:#9AA1B0;background:transparent;
+  border:1px solid rgba(255,255,255,.2);padding:10px 16px;cursor:pointer;text-transform:uppercase}
+#mapOv .mclose:hover{color:#fff;border-color:rgba(255,255,255,.5)}
+#mapBody{flex:1 1 auto;display:flex;min-height:0;position:relative}
+#mapStage{flex:1 1 auto;min-width:0;display:flex;transition:flex-basis .5s cubic-bezier(.2,.7,.25,1),max-width .5s cubic-bezier(.2,.7,.25,1)}
+#mapOv.split #mapStage{flex:0 0 38%;max-width:38%}
+#mapSvg{flex:1 1 auto;width:100%;display:block;cursor:grab}
+#mapSvg:active{cursor:grabbing}
+#mapSvg .lnk{stroke:rgba(255,255,255,.16);stroke-width:1.2;fill:none;transition:stroke .3s,stroke-width .3s}
+#mapSvg .lnk.hot{stroke:var(--acc);stroke-width:2}
+#mapSvg .nd{cursor:pointer}
+#mapSvg .nd circle{transition:r .3s,fill .3s,stroke .3s,opacity .3s}
+#mapSvg .nd text{font-family:var(--sans);fill:#E9EBF0;pointer-events:none;transition:opacity .3s,fill .3s}
+#mapSvg .nd.root text{fill:#0C0E14}
+#mapSvg .nd .halo{fill:none;stroke:var(--acc);opacity:0;transition:opacity .3s}
+#mapSvg .nd.active .halo{opacity:1;stroke-width:2.4}
+#mapSvg .nd.active circle:not(.halo){fill:rgba(143,160,242,.22)}
+#mapSvg .nd.active:not(.root) text{fill:#fff;font-weight:600}
+#mapSvg .nd.root.active text{font-weight:700}
+#mapSvg .nd:hover .halo,#mapSvg .nd.hot .halo{opacity:.55}
+#mapSvg.dim .nd:not(.hot){opacity:.22}
+#mapSvg.dim .lnk:not(.hot){opacity:.12}
+#mapSvg .nd.sub{opacity:0;pointer-events:none;
+  transition:opacity .34s cubic-bezier(.2,.7,.25,1),transform .42s cubic-bezier(.2,.7,.25,1)}
+#mapSvg .nd.sub.open{opacity:1;pointer-events:auto;transform:none !important}
+#mapSvg .nd.sub:not(.open){opacity:0 !important}
+#mapSvg.dim .nd.sub.open:not(.hot){opacity:.5}
+#mapSvg .lnk{opacity:1}
+#mapSvg .lnk.child{opacity:0;transition:opacity .34s}
+#mapSvg .lnk.child.shown{opacity:1}
+#mapOv .mfoot{flex:0 0 auto;padding:0 34px 24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;
+  font-family:var(--mono);font-size:14px;color:#7E8595;letter-spacing:.06em}
+#mapOv .mfoot b{color:#B9C0CF;font-weight:400}
+#mapOv .mlegend{display:flex;gap:20px;flex-wrap:wrap}
+#mapOv .mlegend span{display:flex;align-items:center;gap:8px}
+#mapOv .mlegend i{width:11px;height:11px;border-radius:50%;display:inline-block}
+#mapPanel{flex:0 0 0;max-width:0;overflow:hidden;opacity:0;
+  transition:flex-basis .5s cubic-bezier(.2,.7,.25,1),max-width .5s cubic-bezier(.2,.7,.25,1),opacity .35s;
+  display:flex;flex-direction:column;border-left:1px solid rgba(255,255,255,.14)}
+#mapOv.split #mapPanel{flex:0 0 62%;max-width:62%;opacity:1}
+#mapPanel .php{flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;gap:16px;
+  padding:18px 30px;border-bottom:1px solid rgba(255,255,255,.12)}
+#mapPanel .ptitle{font-family:var(--serif);font-weight:700;font-size:24px;color:#F2F3F6;line-height:1.35}
+#mapPanel .ptitle small{display:block;font-family:var(--mono);font-size:13.5px;letter-spacing:.18em;
+  color:#8992A6;text-transform:uppercase;margin-top:6px;font-weight:400}
+#mapPanel .pacts{display:flex;gap:10px;flex:0 0 auto}
+#mapPanel .pacts button{font-family:var(--mono);font-size:13.5px;letter-spacing:.1em;color:#9AA1B0;
+  background:transparent;border:1px solid rgba(255,255,255,.2);padding:9px 14px;cursor:pointer;white-space:nowrap}
+#mapPanel .pacts button:hover{color:#fff;border-color:rgba(255,255,255,.5)}
+#mapBox{flex:1 1 auto;overflow-y:auto;overscroll-behavior:contain;padding:26px 30px 40px;
+  --bg:#0C0E14; --bg2:#141720; --ink:#ECEDEF; --mut:#B4B9C2; --faint:#8B909B;
+  --hair:rgba(236,237,239,.14); --hair2:rgba(236,237,239,.075);
+  --acc:#8FA0F2; --acc-dim:rgba(143,160,242,.16);
+  --card:rgba(255,255,255,.045); --card-bd:rgba(255,255,255,.1);
+  --shadow:0 1px 2px rgba(0,0,0,.2),0 16px 44px rgba(0,0,0,.4);
+  color:var(--ink)}
+#mapBox::-webkit-scrollbar{width:9px}
+#mapBox::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16)}
+#mapBox .wrap{max-width:none;padding:0}
+#mapBox section.ch{padding:0;border-bottom:0}
+#mapBox .cht{font-size:clamp(28px,2.6vw,40px);margin:0 0 16px;line-height:1.3}
+#mapBox .eyebrow{display:none}
+#mapBox .rv{opacity:1 !important;transform:none !important}
+#mapBox .dkwrap{padding:0;background:transparent}
+#mapBox .modecards,#mapBox .matgrid,#mapBox .kpis,#mapBox .facts,#mapBox .whys,
+#mapBox .case2,#mapBox .duo,#mapBox .tiers,#mapBox .photorow{grid-template-columns:repeat(2,1fr)}
+#mapBox .preq ul,#mapBox .preq.c2 ul{grid-template-columns:1fr 1fr}
+#mapBox .audgrid{grid-template-columns:1fr 1fr}
+#mapBox .statbar{grid-template-columns:repeat(3,1fr)}
+#mapBox .heroimg{display:none}
+@media(max-width:1100px){
+  #mapOv.split #mapStage{flex:0 0 0;max-width:0;overflow:hidden}
+  #mapOv.split #mapPanel{flex:1 1 100%;max-width:100%;border-left:0}
+  #mapBox .modecards,#mapBox .matgrid,#mapBox .kpis,#mapBox .facts,#mapBox .whys,
+  #mapBox .case2,#mapBox .duo,#mapBox .tiers,#mapBox .photorow,
+  #mapBox .audgrid,#mapBox .preq ul,#mapBox .preq.c2 ul{grid-template-columns:1fr}
+  #mapBox .statbar{grid-template-columns:1fr 1fr}
+}
+@media(max-width:820px){
+  #mapBtn{right:16px;bottom:16px;padding:12px 15px;font-size:13.5px}
+  #mapOv .mttl{font-size:20px}
+  #mapOv .mfoot{font-size:13px}
+}
+.heroimg.fit{background:#0B0C10;aspect-ratio:21/10;display:flex;align-items:center;justify-content:center}
+.heroimg.fit img{height:100%;width:auto;max-width:100%;object-fit:contain;transform:none!important}
+@media(max-width:720px){.heroimg.fit{aspect-ratio:16/12}}
+
+#hero,section.ch,.dkwrap{min-height:0!important;padding-top:40px!important;padding-bottom:40px!important}
+.heroimg,.statbar,.tiers,.anchors,.audgrid,.tbw,.bars{margin-top:28px!important}
+</style></head>
+<body><div class="content"><!-- ============ 02 竞品与比较（日本已上架 / 已众筹） ============ -->
+<section class="ch" id="c03">
+  <div class="wrap">
+    <div class="eyebrow rv">02 <span class="zh">竞品与比较 · 日本市场</span></div>
+    <h2 class="cht rv" style="--d:.06s">日本私有云已跑出 10 亿日元纪录，FanX 的优势是<span class="mk">零盘位成本</span></h2>
+    <p class="lede rv" style="--d:.12s">存储品类在美国与日本都已跑出大纪录：UGREEN NASync 系列在美国 Kickstarter 筹得约 670 万美元、13,285 人，随后在日本 GREEN FUNDING 筹得约 640 万美元级、16,850 人（2025 年 2–5 月），为日本购买型众筹历史第一。Makuake 上「免月租私有云」叙事也已三次验证成交。FanX 则利用用户现有电脑的硬盘，把入门私有云的价格打到一个新档位。<span class="srcline">美国成绩参照：UGREEN NASync · Kickstarter 项目页截图（见下）</span></p>
+    <div class="tbw rv">
+      <table class="dt">
+        <tr><th>项目</th><th>平台 · 期间</th><th>形态</th><th class="num">金额</th><th class="num">支持者</th></tr>
+        <tr><td>UGREEN NASync 系列</td><td>GREEN FUNDING · 2025.02–05<small><a href="https://greenfunding.jp/focal/projects/8650" target="_blank" rel="noopener">项目页</a> · 日本购买型众筹历史第一</small></td><td>2–8 盘位成品 NAS</td><td class="num">约 $6.4M<small>JPY 1,022,664,530</small></td><td class="num">16,850</td></tr>
+        <tr class="hl"><td>UnifyDrive UT2</td><td>Makuake · 2025.05 起<small><a href="https://www.makuake.com/project/unifydrive_ut2" target="_blank" rel="noopener">项目页</a> · Makuake 品类天花板</small></td><td>306g 便携 NAS · 16TB</td><td class="num">约 $629K<small>JPY 100,680,040 · 达成率 20,136%</small></td><td class="num">1,366</td></tr>
+        <tr><td>XnBay</td><td>Makuake · 2023<small><a href="https://www.makuake.com/project/xnbay" target="_blank" rel="noopener">项目页</a></small></td><td>个人云存储 · 最大 24TB</td><td class="num">约 $170K<small>JPY 27,255,420</small></td><td class="num">829</td></tr>
+        <tr><td>Zettlab AI NAS</td><td>Makuake · 2025.12–2026.02<small><a href="https://www.makuake.com/project/zettlab_ai_nas" target="_blank" rel="noopener">项目页</a></small></td><td>本地 AI NAS · 最大 152TB</td><td class="num">约 $139K<small>JPY 22,267,600</small></td><td class="num">229</td></tr>
+        <tr><td>FanX Drive X3（本案）</td><td>Makuake · 本案目标</td><td>把现有电脑变私有云 · 58g</td><td class="num"><b class="k">JPY 50,000,000<small>（$312.5K）</small></b></td><td class="num">2,560</td></tr>
+      </table>
+    </div>
+    <div class="anchors">
+      <div class="anchor rv"><div class="k">价格锚点</div><b>入门私有云心智价位 3–6 万日元带</b><p>UGREEN DH2300 日本官方价约 $206（JPY 32,880）、DXP2800 约 $375（JPY 59,880），且 2026-09 起全线涨价 6–12%。FanX 主销档 $117.50（JPY 18,800）直接落在心智价位之下，门槛对折。<span class="srcline">来源：<a href="https://prtimes.jp/main/html/rd/p/000000102.000081071.html" target="_blank" rel="noopener">PR TIMES · UGREEN 日本价格改定公告（2026-08-21）</a> · Amazon.co.jp 实查</span></p></div>
+      <div class="anchor rv" style="--d:.08s"><div class="k">形态锚点</div><b>不买盘柜，用现有电脑的硬盘</b><p>成品 NAS 的成本大头在盘位与机身；FanX 把这部分归零：存储就是用户电脑里已有的硬盘，58g 小盒只负责「让它变成云」。</p></div>
+      <div class="anchor rv" style="--d:.16s"><div class="k">叙事锚点</div><b>对标订阅云账单，不对标 NAS 参数</b><p>iCloud+ 与 Google One 近两年在日本连续涨价（2TB 约 JPY 1,500/月）；「每年几万日元打算一直付下去吗」的问句已被验证能激活大规模购买。<span class="srcline">来源：<a href="https://www.phileweb.com/interview/article/202508/05/1064.html" target="_blank" rel="noopener">PHILE WEB · Focal Point 操盘访谈（2025-08）</a> · Google One 料金改定公告</span></p></div>
+    </div>
+    <figure class="imgcard rv"><img src="img-src/ugreen-us.jpg" alt="UGREEN NASync 美国 Kickstarter 页面"><figcaption>UGREEN NASync 美国 Kickstarter 成绩 · 约 $6.7M · 约 1.33 万人（项目页截图）</figcaption></figure>
+    <figure class="imgcard rv" style="--d:.08s;margin-top:18px"><img src="img-src/ugreen-jp.jpg" alt="UGREEN NASync 日本 GREEN FUNDING 页面"><figcaption>同系列日本 GREEN FUNDING 成绩 · 约 $6.4M · 约 1.68 万人 · 日本购买型众筹历史第一（项目页截图）；该纪录项目的广告规划与投放由 MadSpace 执行（见第 09 章）</figcaption></figure>
+    <p class="note rv">口径说明：竞品金额为公开页面数字，日元原始值见各来源行；美元按 160 JPY/USD 折算。Buffalo / I-O Data 主导日本量贩店 NAS 成品机市场，但无权威公开份额统计，不作数字引用。</p>
+  </div>
+</section>
+<!-- ============ 03 目标拆解 ============ -->
+<section class="ch" id="c05">
+  <div class="wrap">
+    <div class="eyebrow rv">03 <span class="zh">目标拆解</span></div>
+    <h2 class="cht rv" style="--d:.06s">JPY 50,000,000 ÷ $122 客单价 ≈ <span class="mk">2,560 人</span></h2>
+    <p class="lede rv" style="--d:.12s">目标定为 JPY 50,000,000（$312,500）。Makuake 私有云品类目前的纪录约为 $629K（1,366 人）：本案金额取在纪录之下、首进日本稳扎稳打可达的水位，但按五档加权客单价 $122.07 推算需要 2,560 名支持者——人数规模超过品类纪录项目，以人数堆出口碑与评价，为品牌在日本长期经营打底。</p>
+    <div class="statbar rv" style="--d:.18s;margin-top:34px">
+      <div class="st"><div class="k">赞助目标</div><div class="v">$<span class="num" data-n="312500">0</span><small>JPY 50,000,000</small></div></div>
+      <div class="st"><div class="k">÷ 加权客单价</div><div class="v">$<span class="num" data-n="122.07">0</span></div></div>
+      <div class="st"><div class="k">= 需要支持者</div><div class="v"><span class="num" data-n="2560">0</span><small>人</small></div></div>
+    </div>
+    <p class="note rv" style="--d:.3s;margin-top:34px">人数拆分：24 小时限定 250 人 · 超早鸟 375 人 · 早鸟 1,190 人（主力，46.5%）· Makuake 限定 620 人 · 2 台套装 125 组；合计 $312,488，达成率 100.0%。</p>
+    <p class="note rv" style="--d:.36s">节奏目标：上线首周完成 30%（约 $94K），60–90 天众筹期收至目标。早鸟与 Makuake 限定两档合计占 70.7%，符合日本市场「主销集中在中段价位」的成交结构。<span class="srcline">参照：UnifyDrive UT2 · Makuake 约 $629K / 1,366 人（JPY 100,680,040）</span></p>
+  </div>
+</section>
+
+<!-- ============ 04 定价与 Reward 阶梯 ============ -->
+<section class="ch" id="c07">
+  <div class="wrap">
+    <div class="eyebrow rv">04 <span class="zh">定价与 Reward 阶梯</span></div>
+    <h2 class="cht rv" style="--d:.06s">主销档「早鸟 $117.50」= 美国首发档 <span class="mk">+20%</span>，全程低于零售锚点</h2>
+    <p class="lede rv" style="--d:.12s">汇率口径 160 JPY/USD。日本落地价先按日元设计（尾数收在 X,800），再折美元展示：零售锚点 $167.50（JPY 26,800，参照美国 MSRP $169）；主销档早鸟 $117.50（JPY 18,800）= 美国首发档 $99 × 1.2，承担 46.5% 销量。折扣以零售锚点为基准，五档由低到高释放，Makuake 限定不限量承接长尾。<span class="srcline">美国档位参照：首发档 $99（41% OFF）· 次发档 $119（30% OFF）· MSRP $169</span></p>
+    <div class="tiers">
+      <div class="tier rv"><span class="lim">首日 24 小时</span>
+        <div class="tn">24 小时限定 · 37% OFF</div>
+        <div class="pr">$105.00<small> JPY 16,800</small></div>
+        <div class="qty">全场最低价，用时间限制制造首日紧迫感，集中转化预热期蓄水人群。</div>
+        <div class="sum">250 人 · 小计 $26,250</div>
+      </div>
+      <div class="tier rv" style="--d:.06s"><span class="lim">限量 375 台</span>
+        <div class="tn">超早鸟 · 34% OFF</div>
+        <div class="pr">$111.25<small> JPY 17,800</small></div>
+        <div class="qty">首周后承接，维持 early 阶段的转化动能。</div>
+        <div class="sum">小计 $41,719</div>
+      </div>
+      <div class="tier hot rv" style="--d:.12s"><span class="badge">主销档 · 46.5%</span>
+        <div class="tn">早鸟 · 30% OFF</div>
+        <div class="pr">$117.50<small> JPY 18,800</small></div>
+        <div class="qty">限量 1,190 台。加权客单价基准，承接预热期积累的主要转化。</div>
+        <div class="sum">小计 $139,825</div>
+      </div>
+      <div class="tier rv" style="--d:.18s"><span class="lim">不限量</span>
+        <div class="tn">Makuake 限定 · 26% OFF</div>
+        <div class="pr">$123.75<small> JPY 19,800</small></div>
+        <div class="qty">早鸟售罄后不断档，长尾流量全程承接至众筹结束。</div>
+        <div class="sum">620 人 · 小计 $76,725</div>
+      </div>
+      <div class="tier rv" style="--d:.24s"><span class="lim">限量 125 组</span>
+        <div class="tn">2 台套装 · 33% OFF</div>
+        <div class="pr">$223.75<small> JPY 35,800</small></div>
+        <div class="qty">家庭与 SOHO 双机需求，折扣深于单台档，拉高客单价。</div>
+        <div class="sum">小计 $27,969</div>
+      </div>
+      <div class="tier anchor-tier rv" style="--d:.3s">
+        <div class="tn">零售锚点 · 非众筹档位</div>
+        <div class="pr">$167.50<small> JPY 26,800</small></div>
+        <div class="qty">仅作价值参照：众筹全程任何一档都低于此价。512GB / 1TB 预装版按同一 +20% 口径另行定价。</div>
+        <div class="sum">—</div>
+      </div>
+    </div>
+    <div class="aovline rv">
+      <div class="f">合计 <b><span class="num" data-n="2560">0</span> 人</b> / $<span class="num" data-n="312488">0</span> / 目标达成率 <b>100.0%</b> / 加权 AOV <b>$122.07</b></div>
+      <p class="e">校验：Σ(档位价 × 数量) = $312,488；早鸟 + Makuake 限定合计 1,810 人，占 70.7%（≥60%）；支持者 2,560 人 × 加权客单价 $122.07 ≈ $312.5K。</p>
+    </div>
+    <div class="preq c2 rv" id="n-firstday">
+      <div class="pk">首日转化机制 · 24 小时限定档 × 首日优惠券</div>
+      <ul>
+        <li><b>24 小时限定档</b>项目公开至首日日本时间 23:59，开放全场最低价 $105.00，用时间而非数量制造稀缺，集中消化预热期蓄水人群。</li>
+        <li><b>首日优惠券</b>与 24 小时限定档叠加，页面所有 Return 可用，向预热期积累的 4,100–5,500 条意向线索定向发放；折扣率与品牌方确认后填入。平台明确建议使用，是拉首日金额最有效的手段。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+<!-- ============ 06 营销预算与 KPI + KOL ============ -->
+<section class="ch" id="c09">
+  <div class="wrap">
+    <div class="eyebrow rv">06 <span class="zh">营销预算与 KPI</span></div>
+    <h2 class="cht rv" style="--d:.06s">营销费+工具费 $55,625（目标的 17.8%），上线广告以 <span class="mk">Meta 90%</span> 为主轴</h2>
+    <div class="bars rv">
+      <div class="brow" style="--w:62.8%"><div class="bn">预热广告<small>意向线索收集，单条线索成本 $3–4 目标</small></div><div class="bt"><i></i></div><div class="bv"><b>$16,406</b>5.25%</div></div>
+      <div class="brow" style="--w:100%"><div class="bn">上线广告<small>Meta 90% ・ Google 10%，60 / 90 天两档总额相同</small></div><div class="bt"><i></i></div><div class="bv"><b>$26,126</b>8.36%</div></div>
+      <div class="brow" style="--w:41.9%"><div class="bn">媒体 & KOL 合作<small>评测样机 30 台联动，头部首发周 + 腰部分批</small></div><div class="bt"><i></i></div><div class="bv"><b>$10,938</b>3.50%</div></div>
+      <div class="brow" style="--w:6.0%"><div class="bn">线下展示<small>东京实机体验会与线下店展示，渠道资源见第 09 章</small></div><div class="bt"><i></i></div><div class="bv"><b>$1,563</b>0.50%</div></div>
+      <div class="brow" style="--w:1.5%"><div class="bn">其他营销工具<small>线索管理与转介绍活动</small></div><div class="bt"><i></i></div><div class="bv"><b>$386</b>0.12%</div></div>
+      <div class="brow" style="--w:0.8%"><div class="bn">PR TIMES 通稿<small>上线新闻稿发布</small></div><div class="bt"><i></i></div><div class="bv"><b>$206</b>0.07%</div></div>
+      <div class="brow total" style="--w:100%"><div class="bn">合计</div><div></div><div class="bv"><b>$55,625</b>赞助总额的 17.8%</div></div>
+    </div>
+    <div class="tbw rv" style="margin-top:40px">
+      <table class="dt">
+        <tr><th>预算项</th><th class="num">金额</th><th class="num">占比</th></tr>
+        <tr><td>预热广告（30 天）</td><td class="num">$16,406</td><td class="num">5.25%</td></tr>
+        <tr><td>上线广告（60–90 天）</td><td class="num">$26,126</td><td class="num">8.36%</td></tr>
+        <tr><td>媒体 & KOL 合作</td><td class="num">$10,938</td><td class="num">3.50%</td></tr>
+        <tr><td>PR TIMES 通稿</td><td class="num">$206</td><td class="num">0.07%</td></tr>
+        <tr><td>线下展示</td><td class="num">$1,563</td><td class="num">0.50%</td></tr>
+        <tr><td>其他营销工具</td><td class="num">$386</td><td class="num">0.12%</td></tr>
+        <tr class="total"><td>营销费用合计</td><td class="num">$55,625</td><td class="num">17.8%</td></tr>
+      </table>
+    </div>
+    <p class="note rv" style="margin-top:16px">PR TIMES / 线下展示 / 其他营销工具三项为固定日元额（JPY 33,000 / JPY 250,000 / JPY 61,803，按 160 折美元），占比为折算后口径；KOL 合作费含评测联动与内容授权，目标占比 3.5%。</p>
+    <p class="lede rv" style="margin-top:44px;font-size:17px">预热意向线索推算：预热广告 $16,406 ÷ 单条线索成本 $3–4 ≈ <b>4,100–5,500 条意向线索</b>。预热转化率按日本市场区间 3–8% 本次取 5% 测算，是上线首周冲 30% 的人群基础。</p>
+    <div class="kpis rv">
+      <div class="kpi"><div class="kk">赞助目标</div><div class="kv">JPY 50,000,000</div><div class="kd">= $312,500；五档合计 $312,488，达成率 100.0%</div></div>
+      <div class="kpi"><div class="kk">目标支持者</div><div class="kv">2,560 人</div><div class="kd">人数规模超过 Makuake 私有云品类纪录项目（1,366 人）</div></div>
+      <div class="kpi"><div class="kk">加权客单价</div><div class="kv">$122.07</div><div class="kd">= $312,488 ÷ 2,560 人</div></div>
+      <div class="kpi"><div class="kk">营销费+工具费</div><div class="kv">$55,625</div><div class="kd">= $312,500 × 17.8%（JPY 8,900,000）</div></div>
+      <div class="kpi"><div class="kk">预热意向线索</div><div class="kv">4,100–5,500</div><div class="kd">= 预热广告 $16,406 ÷ 单条线索成本 $3–4</div></div>
+    </div>
+    <p class="note rv" style="margin-top:24px">说明：以上目标与预算属于项目运营测算，不构成销售结果承诺。项目执行过程中，将根据实际 CPL、预热 Leads、首日 GMV 和上线广告 ROAS 持续调整策略。</p>
+    <div class="eyebrow rv" style="margin-top:64px" id="n-kol">KOL 预找名单</div>
+    <p class="lede rv" style="font-size:17px">头部 3 个频道在首发周集中发布评测，腰部 9 个候选在第 2–8 周分批发布；评测样机按 30 台准备，KOL 实测、媒体评测、线下展示与拍摄用机一并覆盖。订阅与播放数据截至 2026-08，来自 YouTube 公开页面。落地渠道可走 UUUM / BitStar 按 gadget 垂类批量匹配，Makuake 官方大使网络（免费申请评测与转发）作为基本盘同步登记。</p>
+</div></body></html>
