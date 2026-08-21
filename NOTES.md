@@ -59,13 +59,16 @@ BackerGuardian 信任分 51/100：KS 账号新、「World's First」被质疑（
 - 正文禁假名/¥/円（QA 用 innerText 正则扫）；日文 Return 文案是独立交付物不进 deck
 - 风险章已删；订金/Secret Reward/Late Pledge/Launch Special/Early Bird 英文字样不出现
 
-## KOL 章与交付状态（2026-08-21 收尾）
-- `src/05b-kol.html`：6 频道卡（头部=吉田製作所Y/なおたろ，腰部=かじがや電器店/ワタナベカズマサ/せろりんね/散財TV）+ 候选说明 note（递补 とモヤシ→こにたく→Aile Ch.）；头像 kolNa.jpg、封面 kolNv.jpg（wsrv.nl 代理下载，ytc/ 前缀 URL 必须整体 urlencode）
+## KOL 章与交付状态（2026-08-21 v3）
+- `src/05b-kol.html`：**12 频道卡**（头部=吉田製作所Y/なおたろ；腰部 10 按订阅降序：かじがや電器店/ワタナベカズマサ/戸田覚/高澤けーすけ/せろりんね/とモヤシ/すけこむの動画/散財TV/こにたく/Aile Ch.）；存储主题直接命中 8/12，なおたろ・せろりんね・散財TV・とモヤシ 以痛点/受众契合入选（候选说明 note 已如实标注）
+- 二轮调研底稿 `kol-round2.md`：3 递补全部核实通过（こにたく handle 实为 @nikostyle_tk）+ 新挖 戸田覚(32.4万,容量不足58.7万播放+NAS系列)/高澤けーすけ(24万,写真UGREEN NAS)/すけこむ(10.6万,Synology入门)；全部 ego-browser 实采精确值
+- 评测样机 **8 台**（v3 从 5 台上调）：05-budget lede / 06-timeline T-6 / 09-feasibility 关键前提+交付资产 四处一致；腰部按确认顺序寄送
+- 头像/封面按频道命名 kol-<name>-a/v.jpg（wsrv 代理，ytc 与含特殊字符 URL 需整体 urlencode）；とモヤシ头像确认为纯蓝方块（频道原图即如此，s900 复核一致）
 - KOL 卡片内日文频道名/视频标题按专有名词与事实引用豁免；QA 扫描把 n-kol→下一章区间排除后再扫假名/¥/円
-- 构建 3858KB / 11 parts；sections 11/11 闭合；无 .mstrip
-- 已部署 v2：https://fanx-jp-proposal.vercel.app（alias）
-- 已推送 v2：github.com/mo8903753-ctrl/fanx-jp-proposal@main
-- 待办：首日优惠券折扣率待品牌方确认后填入；递补频道存储视频二轮核实（如需全存储主题阵容）
+- 构建 4484KB / 11 parts / 63 张 data:image；sections 11/11 闭合；无 .mstrip
+- 已部署 v3：https://fanx-jp-proposal.vercel.app（alias）
+- 已推送 v3：github.com/mo8903753-ctrl/fanx-jp-proposal@main
+- 待办：首日优惠券折扣率待品牌方确认后填入
 
 ## v2 修改记录（2026-08-21 用户拍板）
 - 删 c04 合作模式 + c06 双档试算（净回款瀑布）两章，服务费（1.2万+10%）随之全撤出 deck；时间线/页脚的服务费表述已清
