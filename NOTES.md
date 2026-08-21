@@ -82,3 +82,9 @@ BackerGuardian 信任分 51/100：KS 账号新、「World's First」被质疑（
 - KOL 预算占比 0.62%→**3.50%**（用户拍板 3~4 取 3.5）；评测样机按 30 台；头部 3/腰部 9
 - 章节 11→9，全部 eyebrow/导航/图谱/交叉引用同步
 - 截图教训：大页面 ego 截图白屏是渲染卡顿；验证用轻量 preview + CDP 高视口截图，vh 间距类要在 preview CSS 里覆盖掉否则全是大段空白
+
+## 事故记录（2026-08-21）：v4 部署 404
+- 原因：shell 工作目录被重置到 workspace 根目录后执行 `vercel --prod`，把**整个 workspace 目录**（根目录无 index.html）部署到了 fanx-jp-proposal；部署耗时 23s（正常 6–9s）是异常信号但当时未警觉
+- 教训：**部署前必须 `pwd` 确认在项目根**；`vercel inspect <url> --json` 的 files 字段为空不代表部署为空，判据要看构建目录本身
+- 顺带修复：`<title>` 从 gordix 母版残留改为「FanX Drive X3 日本众筹整体方案」（v4.1）
+- 验证：修复后 ego-browser 实开 https://fanx-jp-proposal.vercel.app 确认 200、标题与 hero 图正常（vercel.app 本机可直连，旧记忆"不可达"不准确）
