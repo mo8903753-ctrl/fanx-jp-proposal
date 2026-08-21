@@ -1,0 +1,310 @@
+<!-- ============ 方案图谱（会议导航层） ============ -->
+<button id="mapBtn" aria-label="打开方案图谱">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+    <circle cx="12" cy="5" r="2.4"/><circle cx="5" cy="18" r="2.4"/><circle cx="19" cy="18" r="2.4"/>
+    <path d="M12 7.4 6.6 15.8M12 7.4l5.4 8.4M7.4 18h9.2"/>
+  </svg>
+  方案图谱
+</button>
+<div id="mapOv" role="dialog" aria-label="方案结构图谱">
+  <div class="mhead">
+    <div class="mttl">FanX Drive X3 日本众筹整体方案 · 方案图谱<small>点击任意节点，内容在右侧直接展开</small></div>
+    <button class="mclose">关闭 ESC</button>
+  </div>
+  <div id="mapBody">
+    <div id="mapStage"><svg id="mapSvg"></svg></div>
+    <div id="mapPanel">
+      <div class="php">
+        <div class="ptitle" id="pTitle">—<small id="pKicker"></small></div>
+        <div class="pacts">
+          <button id="pDeck">在方案中查看</button>
+          <button id="pBack">返回总览</button>
+        </div>
+      </div>
+      <div id="mapBox"></div>
+    </div>
+  </div>
+  <div class="mfoot">
+    <div class="mlegend">
+      <span><i style="background:#8FA0F2"></i>判断与市场</span>
+      <span><i style="background:#6FC0B5"></i>钱与转化</span>
+      <span><i style="background:#C6A968"></i>执行与节奏</span>
+      <span><i style="background:#D07159"></i>风险与边界</span>
+    </div>
+    <div><b>M</b> 开关图谱 · <b>点节点</b> 在右侧展开 · <b>在方案中查看</b> 跳转到对应章节</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* reveal */
+  var io = new IntersectionObserver(function(es){es.forEach(function(e){
+    if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+  })},{threshold:.12, rootMargin:'0px 0px -7% 0px'});
+  document.querySelectorAll('.rv,.rrow,.brow,.tle,.wfcol').forEach(function(el){io.observe(el)});
+
+  /* counters */
+  var fmt = function(n){return n.toLocaleString('en-US')};
+  var cio = new IntersectionObserver(function(es){es.forEach(function(e){
+    if(!e.isIntersecting) return;
+    cio.unobserve(e.target);
+    var el = e.target, end = +el.dataset.n, t0 = performance.now(), dur = 1400;
+    var dec = (el.dataset.n.split('.')[1]||'').length;
+    var fout = function(v){ return dec ? v.toLocaleString('en-US',{minimumFractionDigits:dec,maximumFractionDigits:dec}) : fmt(Math.round(v)); };
+    if(reduced){ el.textContent = fout(end); return; }
+    (function tick(now){
+      var p = Math.min(1,(now-t0)/dur), ease = 1-Math.pow(1-p,3);
+      el.textContent = fout(end*ease);
+      if(p<1) requestAnimationFrame(tick);
+    })(t0);
+  })},{threshold:.6});
+  document.querySelectorAll('.num[data-n]').forEach(function(el){cio.observe(el)});
+
+  /* rail */
+  var links = [].slice.call(document.querySelectorAll('#rail a'));
+  var secs  = [].slice.call(document.querySelectorAll('#hero,section.ch,.dkwrap'));
+  var rio = new IntersectionObserver(function(es){es.forEach(function(e){
+    if(!e.isIntersecting) return;
+    var i = secs.indexOf(e.target);
+    links.forEach(function(a,j){a.classList.toggle('on', i===j)});
+  })},{rootMargin:'-42% 0px -42% 0px'});
+  secs.forEach(function(s){rio.observe(s)});
+  links.forEach(function(a,i){a.addEventListener('click',function(ev){ev.preventDefault();secs[i].scrollIntoView({behavior:reduced?'auto':'smooth'})})});
+
+  /* hero parallax (light) */
+  var heroImg = document.getElementById('heroImg');
+  function par(){
+    if(!heroImg || reduced) return;
+    var y = Math.max(-30, Math.min(30, scrollY * -0.045));
+    heroImg.style.transform = 'scale(1.06) translateY(' + y.toFixed(1) + 'px)';
+  }
+  addEventListener('scroll', par, {passive:true});
+  par();
+})();
+</script>
+<script>
+/* ---- 方案图谱（会议导航层） ---- */
+(function(){
+  const NODES=[
+    {id:'root',label:'FanX Drive X3\n日本众筹方案',r:44,g:0,target:'#c02'},
+    {id:'c02',label:'品类判断 · 产品证明',r:26,g:1,target:'#c02'},
+    {id:'c03',label:'竞品与比较 · 日本',r:26,g:1,target:'#c03'},
+    {id:'c04',label:'合作模式',r:26,g:2,target:'#c04'},
+    {id:'c05',label:'目标拆解 4,100 人',r:26,g:2,target:'#c05'},
+    {id:'c06',label:'双档试算',r:26,g:2,target:'#c06'},
+    {id:'c07',label:'定价与 Reward',r:26,g:2,target:'#c07'},
+    {id:'c08',label:'受众与场景',r:26,g:1,target:'#c08'},
+    {id:'c09',label:'营销预算与 KOL',r:26,g:2,target:'#c09'},
+    {id:'c10',label:'执行时间线',r:26,g:3,target:'#c10'},
+    {id:'c11',label:'公司介绍 · 资质',r:26,g:4,target:'#c11'},
+    {id:'c12',label:'案例与资源',r:26,g:3,target:'#c12'},
+    {id:'c13',label:'可行性判断',r:26,g:4,target:'#c13'},
+    {id:'s-modes',label:'两种模式对比',r:15,g:2,p:'c04',target:'#n-modes'},
+    {id:'s-fee',label:'服务费构成',r:15,g:2,p:'c04',target:'#n-fee'},
+    {id:'s-firstday',label:'首日转化机制',r:15,g:2,p:'c07',target:'#n-firstday'},
+    {id:'s-kol',label:'KOL 预找名单',r:15,g:2,p:'c09',target:'#n-kol'},
+    {id:'s-mkres',label:'Makuake 资源',r:15,g:3,p:'c12',target:'#n-mkres'},
+    {id:'s-coop',label:'品牌方配合清单',r:15,g:4,p:'c13',target:'#n-coop'}
+  ];
+  const COLOR={0:'#F2F3F6',1:'#8FA0F2',2:'#6FC0B5',3:'#C6A968',4:'#D07159'};
+  const svg=document.getElementById('mapSvg'), ov=document.getElementById('mapOv'), btn=document.getElementById('mapBtn');
+  if(!svg||!ov||!btn) return;
+  const byId=Object.fromEntries(NODES.map(n=>[n.id,n]));
+  const chapters=NODES.filter(n=>n.g>0&&!n.p);
+
+  function layout(W,H){
+    const cx=W/2, cy=H/2;
+    const R1=Math.min(W,H)*0.285, R2=Math.min(W,H)*0.42;
+    byId.root.x=cx; byId.root.y=cy;
+    chapters.forEach((n,i)=>{
+      const a=-Math.PI/2 + (i/chapters.length)*Math.PI*2;
+      n.x=cx+Math.cos(a)*R1; n.y=cy+Math.sin(a)*R1; n.a=a;
+    });
+    chapters.forEach(par=>{
+      const kids=NODES.filter(k=>k.p===par.id);
+      if(!kids.length) return;
+      const spread=Math.min(0.34+kids.length*0.13, 1.30);
+      kids.forEach((k,j)=>{
+        const t=kids.length===1?0:(j/(kids.length-1)-0.5);
+        const a=par.a + t*spread;
+        const rr=R2*(kids.length>3 && j%2 ? 1.17 : 1);
+        k.x=cx+Math.cos(a)*rr; k.y=cy+Math.sin(a)*rr;
+        const m=k.r+14;
+        k.x=Math.max(m, Math.min(W-m, k.x));
+        k.y=Math.max(m, Math.min(H-m-20, k.y));
+        k.px=par.x; k.py=par.y;
+      });
+    });
+  }
+
+  function render(){
+    const W=svg.clientWidth||innerWidth, H=svg.clientHeight||(innerHeight-190);
+    svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+    layout(W,H);
+    let out='';
+    NODES.filter(n=>n.id!=='root').forEach(n=>{
+      const par=n.p?byId[n.p]:byId.root;
+      out+=`<path class="lnk${n.p?' child':''}" data-a="${n.id}" data-b="${par.id}" d="M${par.x.toFixed(1)} ${par.y.toFixed(1)} Q ${((par.x+n.x)/2).toFixed(1)} ${((par.y+n.y)/2+14).toFixed(1)} ${n.x.toFixed(1)} ${n.y.toFixed(1)}"/>`;
+    });
+    NODES.forEach(n=>{
+      const c=COLOR[n.g], isRoot=n.id==='root', sub=!!n.p;
+      const fs=isRoot?16:(sub?14.5:17);
+      const lines=n.label.split('\n');
+      const ty=n.y+n.r+(isRoot?0:fs+5);
+      let txt='';
+      if(isRoot){
+        lines.forEach((L,i)=>{ txt+=`<text x="${n.x}" y="${n.y+(i-(lines.length-1)/2)*20+6}" text-anchor="middle" font-size="${fs}" font-weight="700" fill="#0C0E14">${L}</text>`; });
+      }else{
+        txt=`<text x="${n.x}" y="${ty}" text-anchor="middle" font-size="${fs}" font-weight="${sub?400:500}">${n.label}</text>`;
+      }
+      const cls='nd'+(sub?' sub':'')+(isRoot?' root':'');
+      const tf=sub?` transform="translate(${(n.px-n.x).toFixed(1)},${(n.py-n.y).toFixed(1)}) scale(.5)" transform-origin="${n.x} ${n.y}"`:'';
+      out+=`<g class="${cls}" data-id="${n.id}" data-p="${n.p||''}" data-target="${n.target||''}" ${tf}>
+        <circle class="halo" cx="${n.x}" cy="${n.y}" r="${n.r+9}" stroke-width="1.5"/>
+        <circle cx="${n.x}" cy="${n.y}" r="${n.r}" fill="${isRoot?c:'rgba(12,14,20,.9)'}" stroke="${c}" stroke-width="${sub?1.4:2}"/>
+        ${txt}</g>`;
+    });
+    svg.innerHTML=out;
+    fitRoot();
+    openChap=null;
+    bind();
+  }
+
+  /* ---- 内容面板：把正文克隆进图谱，单一真相源 ---- */
+  const panel=document.getElementById('mapPanel'), box=document.getElementById('mapBox');
+  const pT=document.getElementById('pTitle'), pK=document.getElementById('pKicker');
+  let curNode=null;
+
+  function collect(sel){
+    const el=document.querySelector(sel);
+    if(!el) return [];
+    if(el.classList.contains('dkwrap')) return [el];
+    if(el.tagName==='SECTION'){
+      const w=el.querySelector('.wrap');
+      return w?[...w.children]:[el];
+    }
+    const out=[el];
+    let n=el.nextElementSibling;
+    while(n && !n.classList.contains('sub-t') && !n.classList.contains('cht') && !n.classList.contains('chname') && !n.classList.contains('eyebrow')){
+      out.push(n); n=n.nextElementSibling;
+    }
+    return out;
+  }
+
+  function showNode(id){
+    const n=byId[id]; if(!n) return;
+    curNode=id;
+    if(id==='root'){ backToMap(); return; }
+    const parts=collect(n.target);
+    box.innerHTML='';
+    parts.forEach(el=>{
+      const c=el.cloneNode(true);
+      c.querySelectorAll?.('[id]').forEach(x=>{ x.dataset.clone=x.id; x.removeAttribute('id'); });
+      if(c.id){ c.dataset.clone=c.id; c.removeAttribute('id'); }
+      c.querySelectorAll?.('.rv').forEach(x=>x.classList.add('in'));
+      c.querySelectorAll?.('.num[data-n]').forEach(x=>{ var d=(x.dataset.n.split('.')[1]||'').length; x.textContent=(+x.dataset.n).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}); });
+      c.classList?.add('in');
+      box.appendChild(c);
+    });
+    box.scrollTop=0;
+    const par=n.p?byId[n.p]:null;
+    pT.childNodes[0].nodeValue=n.label.replace('\n',' · ');
+    pK.textContent=par?par.label:'章节';
+    ov.classList.add('split');
+    requestAnimationFrame(()=>{ render(); markActive(id); });
+  }
+
+  function markActive(id){
+    svg.querySelectorAll('.nd').forEach(x=>x.classList.toggle('active',x.dataset.id===id));
+    const n=byId[id];
+    if(n&&n.p) openFan(n.p);
+  }
+
+  function backToMap(){
+    ov.classList.remove('split'); curNode=null;
+    svg.querySelectorAll('.nd.active').forEach(x=>x.classList.remove('active'));
+    setTimeout(()=>render(),260);
+  }
+  document.getElementById('pBack').addEventListener('click',backToMap);
+  document.getElementById('pDeck').addEventListener('click',()=>{
+    const n=curNode?byId[curNode]:null; if(!n) return;
+    close();
+    const el=document.querySelector(n.target); if(!el) return;
+    setTimeout(()=>{
+      let p=el; while(p&&p!==document.body){ if(p.classList?.contains('rv')) p.classList.add('in'); p=p.parentElement; }
+      el.querySelectorAll?.('.rv').forEach(e=>e.classList.add('in'));
+      el.querySelectorAll?.('.num[data-n]').forEach(x=>{ x.textContent=(+x.dataset.n).toLocaleString('en-US'); });
+      scrollTo({top:el.getBoundingClientRect().top+scrollY-96,behavior:'auto'});
+      el.animate?.([{boxShadow:'0 0 0 0 rgba(43,80,224,0)'},{boxShadow:'0 0 0 6px rgba(43,80,224,.28)'},{boxShadow:'0 0 0 0 rgba(43,80,224,0)'}],{duration:1100,easing:'ease-out'});
+    },200);
+  });
+
+  let closeT=null, openChap=null;
+  function openFan(chap){
+    if(chap===openChap) return;
+    openChap=chap;
+    svg.querySelectorAll('.nd.sub').forEach(g=>g.classList.toggle('open', g.dataset.p===chap));
+    svg.querySelectorAll('.lnk').forEach(l=>{
+      const child=byId[l.dataset.a];
+      if(child&&child.p) l.classList.toggle('shown', child.p===chap);
+    });
+  }
+
+  /* 根节点按文字自动撑圆 */
+  function fitRoot(){
+    const g=svg.querySelector('.nd.root'); if(!g) return;
+    const ts=[...g.querySelectorAll('text')];
+    if(!ts.length) return;
+    let w=0; ts.forEach(t=>{ try{ w=Math.max(w,t.getComputedTextLength()); }catch(e){} });
+    if(!w) return;
+    const fs=parseFloat(getComputedStyle(ts[0]).fontSize)||16;
+    const h=(ts.length-1)*20+fs;
+    const need=Math.sqrt((w/2)**2+(h/2)**2)+10;
+    const n=byId.root;
+    const r=Math.max(n.r, Math.ceil(need));
+    if(r===n.r && g.dataset.fit) return;
+    g.dataset.fit='1';
+    g.querySelector('circle:not(.halo)').setAttribute('r', r);
+    g.querySelector('.halo').setAttribute('r', r+9);
+  }
+
+  function bind(){
+    svg.querySelectorAll('.nd').forEach(g=>{
+      const id=g.dataset.id;
+      g.addEventListener('mouseenter',()=>{
+        clearTimeout(closeT);
+        const n=byId[id];
+        const chap = n.p || (n.id==='root'?null:n.id);
+        openFan(chap);
+        const keep=new Set([id]);
+        if(n.p) keep.add(n.p); else keep.add('root');
+        NODES.filter(k=>k.p===id).forEach(k=>keep.add(k.id));
+        svg.classList.add('dim');
+        svg.querySelectorAll('.nd').forEach(x=>x.classList.toggle('hot',keep.has(x.dataset.id)));
+        svg.querySelectorAll('.lnk').forEach(l=>l.classList.toggle('hot',keep.has(l.dataset.a)&&keep.has(l.dataset.b)));
+      });
+      g.addEventListener('mouseleave',()=>{
+        svg.classList.remove('dim');
+        svg.querySelectorAll('.hot').forEach(x=>x.classList.remove('hot'));
+        closeT=setTimeout(()=>openFan(null),260);
+      });
+      g.addEventListener('click',()=>{ showNode(id); });
+    });
+  }
+
+  function open(){ ov.classList.add('on'); render(); }
+  function close(){ ov.classList.remove('on'); ov.classList.remove('split'); curNode=null; }
+  btn.addEventListener('click',open);
+  ov.querySelector('.mclose').addEventListener('click',close);
+  ov.addEventListener('click',e=>{ if(e.target===ov) close(); });
+  addEventListener('keydown',e=>{
+    if(e.key==='Escape') close();
+    else if((e.key==='m'||e.key==='M')&&!/input|textarea/i.test((e.target.tagName||''))) ov.classList.contains('on')?close():open();
+  });
+  addEventListener('resize',()=>{ if(ov.classList.contains('on')) render(); });
+})();
+</script>
+</body>
+</html>
