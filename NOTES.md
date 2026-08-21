@@ -56,3 +56,11 @@ BackerGuardian 信任分 51/100：KS 账号新、「World's First」被质疑（
 - GitHub 大文件用 gh api base64 单行推送；不用 contents API 拉 >1MB 文件
 - 正文禁假名/¥/円（QA 用 innerText 正则扫）；日文 Return 文案是独立交付物不进 deck
 - 风险章已删；订金/Secret Reward/Late Pledge/Launch Special/Early Bird 英文字样不出现
+
+## KOL 章与交付状态（2026-08-21 收尾）
+- `src/05b-kol.html`：6 频道卡（头部=吉田製作所Y/なおたろ，腰部=かじがや電器店/ワタナベカズマサ/せろりんね/散財TV）+ 候选说明 note（递补 とモヤシ→こにたく→Aile Ch.）；头像 kolNa.jpg、封面 kolNv.jpg（wsrv.nl 代理下载，ytc/ 前缀 URL 必须整体 urlencode）
+- KOL 卡片内日文频道名/视频标题按专有名词与事实引用豁免；QA 扫描把 n-kol→下一章区间排除后再扫假名/¥/円
+- 构建 3867KB / 11 parts / 51 张 data:image；sections 12/12 闭合；无 .mstrip
+- 已部署：https://fanx-jp-proposal.vercel.app（alias）/ fanx-jp-proposal-iclcrumc1-mo8903753-9751s-projects.vercel.app
+- 已推送：github.com/mo8903753-ctrl/fanx-jp-proposal@main（本次 git push 直连成功，未用 gh api 绕行）
+- 待办：首日优惠券折扣率待品牌方确认后填入；递补频道存储视频二轮核实（如需全存储主题阵容）
